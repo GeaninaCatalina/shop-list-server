@@ -1,29 +1,70 @@
-const express = require('express'); 
-const app = express(); 
+const express = require('express');
+const app = express();
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser'); 
-const PORT = process.env.PORT || 4100; 
+const bodyParser = require('body-parser');
+const PORT = process.env.PORT || 4100;
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-var dbUrl = 'mongodb://geanina:password1@ds155747.mlab.com:55747/shopping-list'; 
+app.use(function (req, res, next) {
+  const allowedOrigins = ['http://127.0.0.1:4100', 'http://localhost:3000'];
+  const origin = req.headers.origin;
+  if (allowedOrigins.indexOf(origin) > -1) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
 
-mongoose.connect(dbUrl , { useNewUrlParser: true, useUnifiedTopology: true },  (err) => { 
-    console.log('data base connected',err);
- });
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, POST, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', true);
 
-const UsersConnector = mongoose.model('users', { userName: String, pasword:String });
-const ShoppingListsConnector = mongoose.model('shopping-lists', { listName:String, products:String}); 
+  return next();
+});
+
+var dbUrl = 'mongodb://geanina:password1@ds155747.mlab.com:55747/shopping-list';
+
+mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+  console.log('data base connected', err);
+});
+
+const UsersConnector = mongoose.model('users', { userName: String, password: String });
+const ShoppingListsConnector = mongoose.model('shopping-lists', { listName: String, products: String });
 
 //const user = new UsersConnector({ userName: 'nume', pasword:'1234534' });
 //user.save()
 
-app.get('/login',(req, res)=> {
-    UsersConnector.find({}, (err, users)=> {
-        console.log(users)
-        res.send(true);
-    })
+app.post('/login', (req, res) => {
+  const user = req.body.userName;
+  const password = req.body.password;
+
+  UsersConnector.find({ userName: user, password: password }, (err, users) => {
+    const foundUsers = users.filter(element => element.userName === user && element.password === password);
+   
+    if (foundUsers.length === 0) {
+      res.send(false);
+    } else {
+      res.send(true);
+    }
+  })
+})
+
+
+app.post('/signin', (req, res) => {
+  const newUser = new UsersConnector(req.body);
+
+  const user = req.body.userName;
+  const password = req.body.password;
+
+  UsersConnector.find({ userName: user, password: password }, (err, users) => {
+    const foundExistingUsers = users.filter(element => element.userName === user && element.password === password);
+   
+    if (foundExistingUsers.length === 0){
+      newUser.save();
+      res.send(true);
+    } else {
+      res.send(false);
+    }
+  })
 })
 
 app.listen(4100, () => console.log(`You app is listening on port ${PORT}`));
