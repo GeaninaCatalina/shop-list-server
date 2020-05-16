@@ -28,7 +28,7 @@ mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (er
 });
 
 const UsersConnector = mongoose.model('users', { userName: String, password: String });
-const ShoppingListsConnector = mongoose.model('shopping-lists', { listName: String, products: String });
+const ShoppingListsConnector = mongoose.model('shopping-lists', { listName: String });
 
 //const user = new UsersConnector({ userName: 'nume', pasword:'1234534' });
 //user.save()
@@ -65,6 +65,13 @@ app.post('/signin', (req, res) => {
       res.send(false);
     }
   })
+})
+
+app.post('/savelist', (req, res) => {
+ const newList = new ShoppingListsConnector(req.body); 
+ console.log(req.body);
+  newList.save(); 
+  res.send('OK'); 
 })
 
 app.listen(4100, () => console.log(`You app is listening on port ${PORT}`));
