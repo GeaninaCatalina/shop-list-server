@@ -74,4 +74,13 @@ app.post('/savelist', (req, res) => {
   res.send('OK'); 
 })
 
+
+app.post('/lists', function (req, res) {
+  try {
+    const data = ShoppingListsConnector; 
+  } catch (error) {
+    res.send([]);
+  }
+});
+
 app.listen(4100, () => console.log(`You app is listening on port ${PORT}`));
