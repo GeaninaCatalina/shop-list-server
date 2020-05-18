@@ -68,14 +68,13 @@ app.post('/signin', (req, res) => {
 })
 
 app.post('/savelist', (req, res) => {
- const newList = new ShoppingListsConnector(req.body); 
- console.log(req.body);
+ const newList = new ShoppingListsConnector(req.body);
   newList.save(); 
-  res.send('OK'); 
+  res.send('OK');  
 })
 
 
-app.post('/lists', function (req, res) {
+app.post('/getlists', function (req, res) {
   try {
     const data = ShoppingListsConnector; 
   } catch (error) {
