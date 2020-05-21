@@ -28,7 +28,7 @@ mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (er
 });
 
 const UsersConnector = mongoose.model('users', { userName: String, password: String });
-const ShoppingListsConnector = mongoose.model('shopping-lists', { listName: String });
+const ShoppingListsConnector = mongoose.model('shopping-lists', { listName: String, content:String });
 
 //const user = new UsersConnector({ userName: 'nume', pasword:'1234534' });
 //user.save()
@@ -75,9 +75,8 @@ app.post('/savelist', (req, res) => {
 
 
 app.get('/getlists', function (req, res) {
-    ShoppingListsConnector.find((err, lists) => {
-      console.log(lists);
-      res.send(lists.map(list => {return (list.listName)}));
+    ShoppingListsConnector.find({}, (err, lists) => {
+      res.send(lists.map(list => {return {listName: list.listName, content:list.content}}));
     });
 });
 
