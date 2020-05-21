@@ -14,7 +14,7 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
 
-  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, POST, DELETE');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS, POST, DELETE, PUT');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.header('Access-Control-Allow-Credentials', true);
 
@@ -28,7 +28,7 @@ mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (er
 });
 
 const UsersConnector = mongoose.model('users', { userName: String, password: String });
-const ShoppingListsConnector = mongoose.model('shopping-lists', { listName: String, content:String });
+const ShoppingListsConnector = mongoose.model('shopping-lists', { listName: String, content: String });
 
 //const user = new UsersConnector({ userName: 'nume', pasword:'1234534' });
 //user.save()
@@ -39,7 +39,7 @@ app.post('/login', (req, res) => {
 
   UsersConnector.find({ userName: user, password: password }, (err, users) => {
     const foundUsers = users.filter(element => element.userName === user && element.password === password);
-   
+
     if (foundUsers.length === 0) {
       res.send(false);
     } else {
@@ -57,8 +57,8 @@ app.post('/signin', (req, res) => {
 
   UsersConnector.find({ userName: user, password: password }, (err, users) => {
     const foundExistingUsers = users.filter(element => element.userName === user && element.password === password);
-   
-    if (foundExistingUsers.length === 0){
+
+    if (foundExistingUsers.length === 0) {
       newUser.save();
       res.send(true);
     } else {
@@ -68,16 +68,24 @@ app.post('/signin', (req, res) => {
 })
 
 app.post('/savelist', (req, res) => {
- const newList = new ShoppingListsConnector(req.body);
-  newList.save(); 
-  res.send('OK');  
+  const newList = new ShoppingListsConnector(req.body);
+  newList.save();
+  res.send('OK');
+})
+
+app.put('/updatelist', (req, res) => {
+  const newList = req.body;
+  ShoppingListsConnector.findOneAndUpdate({listName: newList.listName}, newList, (err, list) => {
+    if (err) return res.send(500, {error: err});
+    return res.send('Succesfully saved.');
+  });
 })
 
 
 app.get('/getlists', function (req, res) {
-    ShoppingListsConnector.find({}, (err, lists) => {
-      res.send(lists.map(list => {return {listName: list.listName, content:list.content}}));
-    });
+  ShoppingListsConnector.find({}, (err, lists) => {
+    res.send(lists.map(list => { return { listName: list.listName, content: list.content } }));
+  });
 });
 
 app.listen(4100, () => console.log(`You app is listening on port ${PORT}`));
