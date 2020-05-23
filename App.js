@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 4100;
+const dbUrl = require('./db.conection.json').url;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,8 +21,6 @@ app.use(function (req, res, next) {
 
   return next();
 });
-
-var dbUrl = 'mongodb://geanina:password1@ds155747.mlab.com:55747/shopping-list';
 
 mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
   console.log('data base connected', err);
