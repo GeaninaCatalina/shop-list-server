@@ -68,13 +68,20 @@ app.post('/signin', (req, res) => {
 
 app.post('/savelist', (req, res) => {
   const newList = new ShoppingListsConnector(req.body);
-  newList.save();
-  res.send('OK');
+
+  newList.save((err) => {
+    if(err) {
+      res.sendStatus(500);
+    }
+  })
+  res.send(newList); 
+ 
 })
 
 app.put('/updatelist', (req, res) => {
   const newList = req.body;
-  ShoppingListsConnector.findOneAndUpdate({listName: newList.listName}, newList, (err, list) => {
+  console.log(req.body);
+  ShoppingListsConnector.findOneAndUpdate({_id: newList._id}, newList, (err) => {
     if (err) return res.send(500, {error: err});
     return res.send('Succesfully saved.');
   });
