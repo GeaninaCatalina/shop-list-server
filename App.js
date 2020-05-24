@@ -87,10 +87,23 @@ app.put('/updatelist', (req, res) => {
   });
 })
 
+app.delete('/deletelist/:id', (req, res) => {
+  console.log(req.params.id);
+  ShoppingListsConnector.deleteOne({_id: req.params.id}, (err) => {
+    if (!err) {
+      console.log('Entry deleted');
+      res.sendStatus(200);
+    } else {
+      console.log('Entry not deleted');
+      res.sendStatus(500);
+    }
+  });
+});
+
 
 app.get('/getlists', function (req, res) {
   ShoppingListsConnector.find({}, (err, lists) => {
-    res.send(lists.map(list => { return { listName: list.listName, content: list.content } }));
+    res.send(lists.map(list => { return { _id: list._id, listName: list.listName, content: list.content } }));
   });
 });
 
