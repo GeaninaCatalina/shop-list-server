@@ -66,7 +66,7 @@ app.post('/signin', (req, res) => {
   })
 })
 
-app.post('/savelist', (req, res) => {
+app.post('/list', (req, res) => {
   const newList = new ShoppingListsConnector(req.body);
 
   newList.save((err) => {
@@ -78,7 +78,7 @@ app.post('/savelist', (req, res) => {
  
 })
 
-app.put('/updatelist', (req, res) => {
+app.put('/list', (req, res) => {
   const newList = req.body;
   console.log(req.body);
   ShoppingListsConnector.findOneAndUpdate({_id: newList._id}, newList, (err) => {
@@ -87,7 +87,7 @@ app.put('/updatelist', (req, res) => {
   });
 })
 
-app.delete('/deletelist/:id', (req, res) => {
+app.delete('/list/:id', (req, res) => {
   console.log(req.params.id);
   ShoppingListsConnector.deleteOne({_id: req.params.id}, (err) => {
     if (!err) {
@@ -101,7 +101,7 @@ app.delete('/deletelist/:id', (req, res) => {
 });
 
 
-app.get('/getlists', function (req, res) {
+app.get('/list', function (req, res) {
   ShoppingListsConnector.find({}, (err, lists) => {
     res.send(lists.map(list => { return { _id: list._id, listName: list.listName, content: list.content } }));
   });
