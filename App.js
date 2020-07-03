@@ -29,8 +29,7 @@ mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (er
 const UsersConnector = mongoose.model('users', { userName: String, password: String });
 const ShoppingListsConnector = mongoose.model('shopping-lists', { listName: String, content: String });
 
-//const user = new UsersConnector({ userName: 'nume', pasword:'1234534' });
-//user.save()
+
 
 app.post('/login', (req, res) => {
   const user = req.body.userName;
